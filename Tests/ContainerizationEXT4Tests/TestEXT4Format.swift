@@ -218,6 +218,15 @@ struct Ext4FormatTests: ~Copyable {
         #expect(regFile.mode.isReg())
         #expect(regFile.sizeLow == 4)
     }
+
+    @Test func exportSkipsPreallocatedBlocksPastTheFileSize() throws {
+        let reader = try EXT4.EXT4Reader(blockDevice: fsPath)
+        let file = try #require(reader.tree.lookup(path: FilePath("/x")))
+        file.pointee.additionalBlocks = [(start: 3, end: 4)]
+        let archive = FilePath(FileManager.default.uniqueTemporaryDirectory().appendingPathComponent("export.tar").path)
+        try reader.export(archive: archive)
+        #expect(FileManager.default.fileExists(atPath: archive.description))
+    }
 }
 
 @Suite(.serialized)

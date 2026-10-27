@@ -91,7 +91,7 @@ extension EXT4.EXT4Reader {
                 var data = Data()
                 var remaining: UInt64 = size
                 if let block = item.blocks {
-                    for dataBlock in block.start..<block.end {
+                    for dataBlock in block.start..<block.end where remaining > 0 {
                         try self.seek(block: dataBlock)
                         var count: UInt64
                         if remaining > self.blockSize {
@@ -108,7 +108,7 @@ extension EXT4.EXT4Reader {
                 }
                 if let additionalBlocks = item.additionalBlocks {
                     for block in additionalBlocks {
-                        for dataBlock in block.start..<block.end {
+                        for dataBlock in block.start..<block.end where remaining > 0 {
                             try self.seek(block: dataBlock)
                             var count: UInt64
                             if remaining > self.blockSize {
